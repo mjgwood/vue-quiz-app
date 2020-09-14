@@ -6,7 +6,7 @@
       v-else-if="currentQuestionIndex < questions.length"
       v-bind:key="currentQuestionIndex"
     >
-      <h2>{{ questions[currentQuestionIndex].text }}</h2>
+      <h2>{{ questions[currentQuestionIndex].text | decodeHtml }}</h2>
       <div class="answers-container">
         <div
           class="answer"
@@ -14,7 +14,7 @@
           @click="selectAnswer(index)"
           :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
           :key="index"
-        >{{ answer.text }}</div>
+        >{{ answer.text | decodeHtml }}</div>
       </div>
       <footer>
         <nav class="nav-container" role="navigation" aria-label="Navigation buttons">
@@ -88,32 +88,27 @@ export default {
       });
   },
   methods: {
-    populateQuestions(questionData) {
-      if (questionData.length > 0) {
-        questionData.forEach((question) => {
+    populateQuestions(responseJson) {
+      if (responseJson.length > 0) {
+        responseJson.forEach((questionData) => {
           const newQuestion = {};
           const answers = [];
 
-          [...question.incorrect_answers, question.correct_answer].forEach(
-            (answer) => {
-              let newAnswer;
+          [
+            ...questionData.incorrect_answers,
+            questionData.correct_answer,
+          ].forEach((answer) => {
+            let answerObject = { text: '', correct: false };
 
-              if (answer == question.correct_answer) {
-                newAnswer = {
-                  text: answer,
-                  correct: true,
-                };
-              } else {
-                newAnswer = {
-                  text: answer,
-                };
-              }
+            [answerObject.text, answerObject.correct] = [
+              answer,
+              answer == questionData.correct_answer,
+            ];
 
-              answers.push(newAnswer);
-            }
-          );
+            answers.push(answerObject);
+          });
 
-          newQuestion.text = question.question;
+          newQuestion.text = questionData.question;
           newQuestion.answers = this.shuffle(answers);
           this.questions.push(newQuestion);
         });
@@ -171,6 +166,13 @@ export default {
         [arr[i], arr[j]] = [arr[j], arr[i]];
       }
       return arr;
+    },
+  },
+  filters: {
+    decodeHtml(html) {
+      const textArea = document.createElement('textarea');
+      textArea.innerHTML = html;
+      return textArea.value;
     },
   },
 };
