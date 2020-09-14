@@ -20,7 +20,7 @@ export default {
 @include normalize();
 
 body {
-  background-color: #2c3e50;
+  background-color: #4b93db;
 }
 #app {
   display: flex;

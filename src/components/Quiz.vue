@@ -48,7 +48,10 @@
     >
       <h2>{{ completionMessage() }}</h2>
       <p>{{ calcScore() }} / {{ questions.length }} correct answers</p>
-      <button type="button" @click="restartQuiz()">Restart Quiz</button>
+      <div class="restart-buttons">
+        <button type="button" @click="restartQuiz()">Try again</button>
+        <button type="button" @click="restartQuiz(true)">Restart with new questions</button>
+      </div>
     </div>
   </div>
 </template>
@@ -69,25 +72,28 @@ export default {
     };
   },
   mounted() {
-    const url = 'https://opentdb.com/api.php?amount=5&category=9';
-    axios
-      .get(url)
-      .then((response) => {
-        // If results not returned successfully
-        if (response.data.response_code != 0) {
-          return Promise.reject(response);
-        }
-
-        this.populateQuestions(response.data.results);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(
-          'Sorry, something went wrong trying to load the questions. Please try again.'
-        );
-      });
+    this.fetchData();
   },
   methods: {
+    fetchData() {
+      const url = 'https://opentdb.com/api.php?amount=5&category=9';
+      axios
+        .get(url)
+        .then((response) => {
+          // If results not returned successfully
+          if (response.data.response_code != 0) {
+            return Promise.reject(response);
+          }
+
+          this.populateQuestions(response.data.results);
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(
+            'Sorry, something went wrong trying to load the questions. Please try again.'
+          );
+        });
+    },
     populateQuestions(responseJson) {
       if (responseJson.length > 0) {
         responseJson.forEach((questionData) => {
@@ -114,23 +120,23 @@ export default {
         });
       }
     },
-    selectAnswer: function (index) {
+    selectAnswer(index) {
       window.Vue.set(this.chosenAnswers, this.currentQuestionIndex, index);
     },
-    prevQuestion: function () {
+    prevQuestion() {
       if (this.questions.length > 0 && this.currentQuestionIndex > 0) {
         this.currentQuestionIndex--;
       }
     },
-    nextQuestion: function () {
+    nextQuestion() {
       if (this.currentQuestionIndex < this.questions.length) {
         this.currentQuestionIndex++;
       }
     },
-    selectQuestion: function (index) {
+    selectQuestion(index) {
       this.currentQuestionIndex = index;
     },
-    calcScore: function () {
+    calcScore() {
       let total = 0;
 
       this.chosenAnswers.forEach((answer, index) => {
@@ -145,7 +151,7 @@ export default {
 
       return total;
     },
-    completionMessage: function () {
+    completionMessage() {
       let text = 'Better luck next time';
 
       if (this.calcScore() >= questions.length * 0.8) {
@@ -156,11 +162,16 @@ export default {
 
       return text;
     },
-    restartQuiz: function () {
+    restartQuiz(newQuestions = false) {
+      if (newQuestions) {
+        this.questions = [];
+        this.fetchData();
+      }
+
       this.currentQuestionIndex = 0;
       this.chosenAnswers = [];
     },
-    shuffle: function (arr) {
+    shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -277,6 +288,17 @@ button {
     }
     .is-active {
       background-color: #3b3e39;
+    }
+  }
+}
+.restart-buttons {
+  display: flex;
+  flex-flow: column;
+  margin-top: 2rem;
+
+  button {
+    & + * {
+      margin-top: 0.5rem;
     }
   }
 }
