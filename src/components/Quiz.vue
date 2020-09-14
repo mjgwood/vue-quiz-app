@@ -13,10 +13,11 @@
       </div>
       <footer>
         <nav class="nav-container" role="navigation" aria-label="Navigation buttons">
+          <button @click="prevQuestion();" :disabled="currentQuestionIndex < 1">Back</button>
           <button
             @click="nextQuestion();"
             :disabled="chosenAnswers[currentQuestionIndex] == null || currentQuestionIndex >= questions.length"
-          >Next</button>
+          >{{ currentQuestionIndex == questions.length - 1 ? 'Submit' : 'Next' }}</button>
         </nav>
       </footer>
     </div>
@@ -26,6 +27,7 @@
       class="quiz-completed"
     >
       <p>{{ calcScore() }} / {{ questions.length }} correct answers</p>
+      <button @click="restartQuiz()">Restart Quiz</button>
     </div>
   </div>
 </template>
@@ -84,6 +86,11 @@ export default {
     selectAnswer: function (index) {
       window.Vue.set(this.chosenAnswers, this.currentQuestionIndex, index);
     },
+    prevQuestion: function () {
+      if (this.questions.length > 0 && this.currentQuestionIndex > 0) {
+        this.currentQuestionIndex--;
+      }
+    },
     nextQuestion: function () {
       if (this.currentQuestionIndex < this.questions.length) {
         this.currentQuestionIndex++;
@@ -103,6 +110,10 @@ export default {
       });
 
       return total;
+    },
+    restartQuiz: function () {
+      this.currentQuestionIndex = 0;
+      this.chosenAnswers = Array.from(this.quiz.questions, () => null);
     },
   },
 };
