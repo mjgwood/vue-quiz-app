@@ -23,9 +23,18 @@
             @click="nextQuestion();"
             :disabled="chosenAnswers[currentQuestionIndex] == null || currentQuestionIndex >= questions.length"
           >{{ currentQuestionIndex == questions.length - 1 ? 'Submit' : 'Next' }}</button>
-          <ul>
-            <li v-for="(question, index) in questions" :key="index" @click="selectQuestion(index)">
-              <button type="button" :disabled="chosenAnswers.length < index">{{ index + 1 }}</button>
+          <ul class="nav-steps">
+            <li
+              class="nav-step"
+              v-for="(question, index) in questions"
+              :key="index"
+              @click="selectQuestion(index)"
+            >
+              <button
+                type="button"
+                :disabled="chosenAnswers.length < index"
+                :class="{'is-active': currentQuestionIndex == index}"
+              >{{ index + 1 }}</button>
             </li>
           </ul>
         </nav>
@@ -196,7 +205,11 @@ button {
   background-color: #70757d;
   white-space: nowrap;
   text-decoration: none;
+  transition: background-color 0.1s;
   cursor: pointer;
+  &:hover {
+    background-color: #3b3e39;
+  }
   &[disabled] {
     opacity: 0.5;
     pointer-events: none;
@@ -213,8 +226,12 @@ button {
   color: #fff;
   background-color: #505b6c;
   border-radius: 0.75rem;
+  transition: background-color 0.1s;
   & + * {
     margin-top: 0.5rem;
+  }
+  &:hover {
+    background-color: #d04291;
   }
   &.is-selected {
     background-color: #dd1785;
@@ -225,14 +242,16 @@ button {
   flex-flow: row wrap;
   justify-content: space-between;
   margin-top: 2rem;
-  ul {
+  .nav-steps {
     flex: 1 0 100%;
-
-    li {
+    .nav-step {
       margin: 10px;
     }
     button {
       padding: 0.5rem 1rem;
+    }
+    .is-active {
+      background-color: #3b3e39;
     }
   }
 }
