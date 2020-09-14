@@ -1,8 +1,9 @@
 <template>
   <div>
+    <div v-if="questions.length == 0">Loading...</div>
     <div
       class="quiz"
-      v-if="currentQuestionIndex < questions.length"
+      v-else-if="currentQuestionIndex < questions.length"
       v-bind:key="currentQuestionIndex"
     >
       <h2>{{ questions[currentQuestionIndex].text }}</h2>
@@ -41,7 +42,7 @@
       </footer>
     </div>
     <div
-      v-if="currentQuestionIndex >= questions.length"
+      v-else-if="currentQuestionIndex >= questions.length"
       v-bind:key="currentQuestionIndex"
       class="quiz-completed"
     >
@@ -53,45 +54,10 @@
 </template>
 
 <script>
-const questions = [
-    {
-      text: 'Question 1?',
-      answers: [
-        { text: 'A', correct: true },
-        { text: 'B' },
-        { text: 'C' },
-        { text: 'D' },
-      ],
-    },
-    {
-      text: 'Question 2?',
-      answers: [
-        { text: 'A' },
-        { text: 'B', correct: true },
-        { text: 'C' },
-        { text: 'D' },
-      ],
-    },
-    {
-      text: 'Question 3?',
-      answers: [
-        { text: 'A' },
-        { text: 'B' },
-        { text: 'C', correct: true },
-        { text: 'D' },
-      ],
-    },
-    {
-      text: 'Question 4?',
-      answers: [
-        { text: 'A' },
-        { text: 'B' },
-        { text: 'C' },
-        { text: 'D', correct: true },
-      ],
-    },
-  ],
+const questions = [],
   chosenAnswers = [];
+
+import axios from 'axios';
 
 export default {
   name: 'Quiz',
@@ -102,7 +68,57 @@ export default {
       currentQuestionIndex: 0,
     };
   },
+  mounted() {
+    const url = 'https://opentdb.com/api.php?amount=5&category=9';
+    axios
+      .get(url)
+      .then((response) => {
+        // If results not returned successfully
+        if (response.data.response_code != 0) {
+          return Promise.reject(response);
+        }
+
+        this.populateQuestions(response.data.results);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert(
+          'Sorry, something went wrong trying to load the questions. Please try again.'
+        );
+      });
+  },
   methods: {
+    populateQuestions(questionData) {
+      if (questionData.length > 0) {
+        questionData.forEach((question) => {
+          const newQuestion = {};
+          const answers = [];
+
+          [...question.incorrect_answers, question.correct_answer].forEach(
+            (answer) => {
+              let newAnswer;
+
+              if (answer == question.correct_answer) {
+                newAnswer = {
+                  text: answer,
+                  correct: true,
+                };
+              } else {
+                newAnswer = {
+                  text: answer,
+                };
+              }
+
+              answers.push(newAnswer);
+            }
+          );
+
+          newQuestion.text = question.question;
+          newQuestion.answers = this.shuffle(answers);
+          this.questions.push(newQuestion);
+        });
+      }
+    },
     selectAnswer: function (index) {
       window.Vue.set(this.chosenAnswers, this.currentQuestionIndex, index);
     },
@@ -148,6 +164,13 @@ export default {
     restartQuiz: function () {
       this.currentQuestionIndex = 0;
       this.chosenAnswers = [];
+    },
+    shuffle: function (arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     },
   },
 };
