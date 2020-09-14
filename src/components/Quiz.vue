@@ -18,6 +18,11 @@
             @click="nextQuestion();"
             :disabled="chosenAnswers[currentQuestionIndex] == null || currentQuestionIndex >= questions.length"
           >{{ currentQuestionIndex == questions.length - 1 ? 'Submit' : 'Next' }}</button>
+          <ul>
+            <li v-for="(question, index) in questions" :key="index" @click="selectQuestion(index)">
+              <button :disabled="chosenAnswers.length < index">{{ index + 1 }}</button>
+            </li>
+          </ul>
         </nav>
       </footer>
     </div>
@@ -71,7 +76,7 @@ const questions = [
       ],
     },
   ],
-  chosenAnswers = Array.from(questions.length, () => null);
+  chosenAnswers = [];
 
 export default {
   name: 'Quiz',
@@ -96,6 +101,9 @@ export default {
         this.currentQuestionIndex++;
       }
     },
+    selectQuestion: function (index) {
+      this.currentQuestionIndex = index;
+    },
     calcScore: function () {
       let total = 0;
 
@@ -113,7 +121,7 @@ export default {
     },
     restartQuiz: function () {
       this.currentQuestionIndex = 0;
-      this.chosenAnswers = Array.from(this.quiz.questions, () => null);
+      this.chosenAnswers = [];
     },
   },
 };
