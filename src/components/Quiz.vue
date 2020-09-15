@@ -9,7 +9,7 @@
       <h2>{{ questions[currentQuestionIndex].text | decodeHtml }}</h2>
       <div class="answers-container">
         <div
-          class="answer"
+          class="answer answer--option"
           v-for="(answer, index) in questions[currentQuestionIndex].answers"
           @click="selectAnswer(index)"
           :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
@@ -46,17 +46,24 @@
       v-bind:key="currentQuestionIndex"
       class="quiz-completed"
     >
+      <p class="score">{{ calcScore() }} / {{ questions.length }}</p>
       <h2>{{ completionMessage() }}</h2>
-      <p>{{ calcScore() }} / {{ questions.length }} correct answers</p>
-      <div
-        class="quiz-answers"
-        v-for="(question, index) in questions"
-        :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
-        :key="index"
-      >
-        <h3>{{ question.text | decodeHtml }}</h3>
-        <p>Your answer: {{ question.answers[chosenAnswers[index]].text | decodeHtml }}</p>
-        <p>Correct answer: {{ question.answers.find(a => a.correct == true).text | decodeHtml }}</p>
+      <div class="quiz-answers">
+        <div
+          class="quiz-answer"
+          v-for="(question, index) in questions"
+          :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
+          :key="index"
+        >
+          <h3 class="question">{{ question.text | decodeHtml }}</h3>
+          <p
+            class="answer answer--correct"
+          >Correct answer: {{ question.answers.find(a => a.correct == true).text | decodeHtml }}</p>
+          <p
+            v-if="!answerCorrect(question, chosenAnswers[index])"
+            class="answer answer--incorrect"
+          >Your answer: {{ question.answers[chosenAnswers[index]].text | decodeHtml }}</p>
+        </div>
       </div>
       <div class="restart-buttons">
         <button type="button" @click="restartQuiz()">Try again</button>
@@ -180,6 +187,11 @@ export default {
 
       return text;
     },
+    // Check if a given index is the correct answer for a given question
+    answerCorrect(question, answerIndex) {
+      return question.answers[answerIndex].correct;
+      // question.answers.find(a => a.correct == true);
+    },
     // Restart quiz, and optionally fetch new questions
     restartQuiz(newQuestions = false) {
       if (newQuestions) {
@@ -190,7 +202,7 @@ export default {
       this.currentQuestionIndex = 0;
       this.chosenAnswers = [];
     },
-    // Utility array shuffle function
+    // Utility Durstenfeld array shuffle
     shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -231,7 +243,7 @@ a {
   justify-content: center;
   max-width: 50rem;
   width: 100%;
-  margin: 60px auto 0;
+  margin: 0 auto;
   padding: 4rem 1rem;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -247,15 +259,9 @@ a {
   max-width: 40rem;
   width: 100%;
 }
-button,
-.answer {
-  &:hover {
-    cursor: pointer;
-  }
-}
 button {
   border: 0;
-  border-radius: 0.25rem;
+  border-radius: 50px;
   padding: 1rem 2rem;
   font-family: -system-ui, sans-serif;
   font-size: 1rem;
@@ -278,22 +284,61 @@ button {
   margin-top: 2.5rem;
 }
 .answer {
-  max-width: 100%;
-  padding: 1.5rem;
+  margin-left: auto;
+  margin-right: auto;
   font-size: 1.125rem;
   font-weight: 600;
   color: #fff;
   background-color: #505b6c;
-  border-radius: 0.75rem;
-  transition: background-color 0.1s;
-  & + * {
+  border-radius: 50px;
+  &--option {
+    max-width: 100%;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    &:hover {
+      background-color: #d04291;
+    }
+    &.is-selected {
+      background-color: #dd1785;
+    }
+    & + * {
+      margin-top: 0.5rem;
+    }
+  }
+  &--correct,
+  &--incorrect {
+    max-width: 80%;
     margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    padding: 0.75rem 1.5rem;
   }
-  &:hover {
-    background-color: #d04291;
+  &--correct {
+    background-color: #16a850;
   }
-  &.is-selected {
-    background-color: #dd1785;
+  &--incorrect {
+    background-color: #d41f22;
+  }
+}
+.score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10rem;
+  height: 10rem;
+  margin: 0 auto;
+  font-size: 3rem;
+  font-weight: 600;
+  border: 0.375rem solid;
+  border-radius: 50%;
+}
+.quiz-answers {
+  margin-top: 2rem;;
+  border-top: 1px solid;
+}
+.quiz-answer {
+  .question {
+    margin-bottom: 1rem;
   }
 }
 .nav-container {
@@ -307,6 +352,8 @@ button {
       margin: 10px;
     }
     button {
+      width: 3rem;
+      height: 3rem;
       padding: 0.5rem 1rem;
     }
     .is-active {
@@ -317,9 +364,11 @@ button {
 .restart-buttons {
   display: flex;
   flex-flow: column;
+  align-items: center;
   margin-top: 2rem;
 
   button {
+    min-width: 290px;
     & + * {
       margin-top: 0.5rem;
     }
