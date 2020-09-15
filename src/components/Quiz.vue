@@ -48,6 +48,16 @@
     >
       <h2>{{ completionMessage() }}</h2>
       <p>{{ calcScore() }} / {{ questions.length }} correct answers</p>
+      <div
+        class="quiz-answers"
+        v-for="(question, index) in questions"
+        :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
+        :key="index"
+      >
+        <h3>{{ question.text | decodeHtml }}</h3>
+        <p>Your answer: {{ question.answers[chosenAnswers[index]].text | decodeHtml }}</p>
+        <p>Correct answer: {{ question.answers.find(a => a.correct == true).text | decodeHtml }}</p>
+      </div>
       <div class="restart-buttons">
         <button type="button" @click="restartQuiz()">Try again</button>
         <button type="button" @click="restartQuiz(true)">Restart with new questions</button>
@@ -72,10 +82,11 @@ export default {
     };
   },
   mounted() {
-    this.fetchData();
+    this.init();
   },
   methods: {
-    fetchData() {
+    // Fetch question data from Open Trivia DB and call populateQuestions()
+    init() {
       const url = 'https://opentdb.com/api.php?amount=5&category=9';
       axios
         .get(url)
@@ -94,6 +105,7 @@ export default {
           );
         });
     },
+    // Populate questions array
     populateQuestions(responseJson) {
       if (responseJson.length > 0) {
         responseJson.forEach((questionData) => {
@@ -120,22 +132,27 @@ export default {
         });
       }
     },
+    // Set user's chosen answer
     selectAnswer(index) {
       window.Vue.set(this.chosenAnswers, this.currentQuestionIndex, index);
     },
+    // Decrement currentQuestionIndex
     prevQuestion() {
       if (this.questions.length > 0 && this.currentQuestionIndex > 0) {
         this.currentQuestionIndex--;
       }
     },
+    // Increment currentQuestionIndex
     nextQuestion() {
       if (this.currentQuestionIndex < this.questions.length) {
         this.currentQuestionIndex++;
       }
     },
+    // Update currentQuestionIndex to given index
     selectQuestion(index) {
       this.currentQuestionIndex = index;
     },
+    // Calculate user's total score
     calcScore() {
       let total = 0;
 
@@ -151,6 +168,7 @@ export default {
 
       return total;
     },
+    // Generate completionMessage based on score %
     completionMessage() {
       let text = 'Better luck next time';
 
@@ -162,15 +180,17 @@ export default {
 
       return text;
     },
+    // Restart quiz, and optionally fetch new questions
     restartQuiz(newQuestions = false) {
       if (newQuestions) {
         this.questions = [];
-        this.fetchData();
+        this.init();
       }
 
       this.currentQuestionIndex = 0;
       this.chosenAnswers = [];
     },
+    // Utility array shuffle function
     shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -180,6 +200,7 @@ export default {
     },
   },
   filters: {
+    // Convert strings of HTML entities to characters
     decodeHtml(html) {
       const textArea = document.createElement('textarea');
       textArea.innerHTML = html;
@@ -219,6 +240,8 @@ a {
   color: #555;
   background-color: #fff;
   border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(45, 45, 45, 0.19),
+    0 6px 6px rgba(74, 74, 74, 0.23);
 }
 .quiz {
   max-width: 40rem;
