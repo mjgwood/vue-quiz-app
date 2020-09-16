@@ -81,8 +81,9 @@
           </div>
         </div>
         <div class="restart-buttons">
-          <button class="button" type="button" @click="restartQuiz()">Try again</button>
-          <button class="button" type="button" @click="restartQuiz(true)">Restart with new questions</button>
+          <button class="button" type="button" @click="reset()">Try again</button>
+          <button class="button" type="button" @click="resetQuestions()">Restart with new questions</button>
+          <button class="button" type="button" @click="resetAll()">New setup</button>
         </div>
       </div>
     </div>
@@ -254,15 +255,24 @@ export default {
       return question.answers[answerIndex].correct;
       // question.answers.find(a => a.correct == true);
     },
-    // Restart quiz, and optionally fetch new questions
-    restartQuiz(newQuestions = false) {
-      if (newQuestions) {
-        this.questions = [];
-        this.startQuiz();
-      }
-
+    // Reset quiz with the same questions
+    reset() {
       this.currentQuestionIndex = 0;
       this.chosenAnswers = [];
+    },
+    // Reset quiz with the new questions
+    resetQuestions() {
+      this.questions = [];
+      this.startQuiz();
+      this.reset();
+    },
+    // Reset everything for new setup
+    resetAll() {
+      this.chosenCategory = null;
+      this.chosenDifficulty = null;
+      this.questions = [];
+      this.reset();
+      this.isStarted = false;
     },
     // Utility Durstenfeld array shuffle
     shuffle(arr) {
@@ -417,15 +427,14 @@ h3 {
 }
 .restart-buttons {
   display: flex;
-  flex-flow: column;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
   align-items: center;
   margin-top: 2rem;
 
   .button {
     min-width: 290px;
-    & + * {
-      margin-top: 0.5rem;
-    }
+    margin-top: 1rem;
   }
 }
 </style>

@@ -34,7 +34,7 @@ a {
   color: #42b983;
 }
 .button {
-  min-width: 160px;
+  min-width: 140px;
   padding: 1rem 2rem;
   font-family: -system-ui, sans-serif;
   font-size: 1rem;

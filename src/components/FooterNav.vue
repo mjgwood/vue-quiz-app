@@ -80,7 +80,7 @@ export default {
   .nav-steps {
     flex: 1 0 100%;
     .nav-step {
-      margin: 10px;
+      margin: 10px 6px;
     }
     .button {
       width: 3rem;
