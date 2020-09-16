@@ -55,7 +55,9 @@ export default {
     },
     // Update currentQuestionIndex to given index
     selectQuestion(index) {
-      this.$emit('update-question-index', index);
+      if (this.chosenAnswers.length - 1 >= index) {
+        this.$emit('update-question-index', index);
+      }
     },
   },
 };
