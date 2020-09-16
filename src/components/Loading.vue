@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <p>Loading your questions...</p>
+    <p>{{ text }}</p>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -81,6 +81,9 @@
 <script>
 export default {
   name: 'Loading',
+  props: {
+    text: String,
+  },
 };
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="setup-container" v-if="!isStarted">
-      <Loading v-if="categories.length == 0" />
+      <Loading v-if="categories.length == 0" text="Loading setup options..." />
       <div v-else>
         <h2>Choose your setup</h2>
         <h3>Category</h3>
@@ -33,7 +33,7 @@
       </div>
     </div>
     <div v-if="isStarted">
-      <Loading v-if="questions.length == 0" />
+      <Loading v-if="questions.length == 0" text="Loading your questions..." />
       <div
         class="quiz"
         v-else-if="currentQuestionIndex < questions.length"
