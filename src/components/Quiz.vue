@@ -16,37 +16,12 @@
           :key="index"
         >{{ answer.text | decodeHtml }}</div>
       </div>
-      <footer>
-        <nav class="nav-container" role="navigation" aria-label="Navigation buttons">
-          <button
-            class="button"
-            type="button"
-            @click="prevQuestion();"
-            :disabled="currentQuestionIndex < 1"
-          >Back</button>
-          <button
-            class="button button--next"
-            type="button"
-            @click="nextQuestion();"
-            :disabled="chosenAnswers[currentQuestionIndex] == null || currentQuestionIndex >= questions.length"
-          >{{ currentQuestionIndex == questions.length - 1 ? 'Submit' : 'Next' }}</button>
-          <ul class="nav-steps">
-            <li
-              class="nav-step"
-              v-for="(question, index) in questions"
-              :key="index"
-              @click="selectQuestion(index)"
-            >
-              <button
-                class="button"
-                type="button"
-                :disabled="chosenAnswers.length < index"
-                :class="{'is-active': currentQuestionIndex == index}"
-              >{{ index + 1 }}</button>
-            </li>
-          </ul>
-        </nav>
-      </footer>
+      <FooterNav
+        v-bind:questions="questions"
+        v-bind:chosenAnswers="chosenAnswers"
+        v-bind:currentQuestionIndex="currentQuestionIndex"
+        v-on:update-question-index="currentQuestionIndex = $event"
+      />
     </div>
     <div
       v-else-if="currentQuestionIndex >= questions.length"
@@ -84,6 +59,7 @@
 import axios from 'axios';
 
 import Loading from './Loading.vue';
+import FooterNav from './FooterNav.vue';
 
 const questions = [],
   chosenAnswers = [];
@@ -92,6 +68,7 @@ export default {
   name: 'Quiz',
   components: {
     Loading,
+    FooterNav,
   },
   data() {
     return {
@@ -154,22 +131,6 @@ export default {
     // Set user's chosen answer
     selectAnswer(index) {
       window.Vue.set(this.chosenAnswers, this.currentQuestionIndex, index);
-    },
-    // Decrement currentQuestionIndex
-    prevQuestion() {
-      if (this.questions.length > 0 && this.currentQuestionIndex > 0) {
-        this.currentQuestionIndex--;
-      }
-    },
-    // Increment currentQuestionIndex
-    nextQuestion() {
-      if (this.currentQuestionIndex < this.questions.length) {
-        this.currentQuestionIndex++;
-      }
-    },
-    // Update currentQuestionIndex to given index
-    selectQuestion(index) {
-      this.currentQuestionIndex = index;
     },
     // Calculate user's total score
     calcScore() {
@@ -238,17 +199,6 @@ export default {
 h3 {
   margin: 40px 0 0;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 .quiz-container {
   display: flex;
   position: relative;
@@ -270,33 +220,6 @@ a {
 .quiz {
   max-width: 40rem;
   width: 100%;
-}
-.button {
-  border: 0;
-  border-radius: 50px;
-  padding: 1rem 2rem;
-  font-family: -system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.2;
-  color: #fff;
-  background-color: #70757d;
-  white-space: nowrap;
-  text-decoration: none;
-  transition: background-color 0.1s;
-  cursor: pointer;
-  &:hover {
-    background-color: #3b3e39;
-  }
-  &--next {
-    background-color: #dd1785;
-    &:hover {
-      background-color: #c8438d;
-    }
-  }
-  &[disabled] {
-    background-color: #a9aaac;
-    pointer-events: none;
-  }
 }
 .answers-container {
   margin-top: 2.5rem;
@@ -360,26 +283,6 @@ a {
 .quiz-answer {
   .question {
     margin-bottom: 1rem;
-  }
-}
-.nav-container {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  margin-top: 2rem;
-  .nav-steps {
-    flex: 1 0 100%;
-    .nav-step {
-      margin: 10px;
-    }
-    .button {
-      width: 3rem;
-      height: 3rem;
-      padding: 0.5rem 1rem;
-    }
-    .is-active {
-      background-color: #3b3e39;
-    }
   }
 }
 .restart-buttons {
