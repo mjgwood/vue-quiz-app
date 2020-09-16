@@ -302,7 +302,7 @@ h3 {
   -moz-osx-font-smoothing: grayscale;
   color: #555;
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow: 0 10px 20px rgba(45, 45, 45, 0.19),
     0 6px 6px rgba(74, 74, 74, 0.23);
 }
@@ -327,8 +327,8 @@ h3 {
   margin: 0.5rem;
   padding: 1rem;
   font-size: 1.125rem;
-  border: 2px solid #6f7379;
-  border-radius: 10px;
+  border: 1px solid #6f7379;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.1s;
   &:hover {
@@ -342,6 +342,10 @@ h3 {
 }
 .button--start {
   margin-top: 2rem;
+  background-color: #dd1785;
+  &:hover {
+    background-color: #c8438d;
+  }
 }
 .quiz {
   max-width: 40rem;
@@ -358,8 +362,8 @@ h3 {
   &--option {
     max-width: 100%;
     padding: 1rem;
-    border: 2px solid #6f7379;
-    border-radius: 20px;
+    border: 1px solid #6f7379;
+    border-radius: 50px;
     cursor: pointer;
     transition: all 0.1s;
     &:hover {

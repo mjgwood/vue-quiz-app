@@ -62,7 +62,7 @@ a {
   padding: 40px 10px;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  background-color: #0e1824;
+  background-color: #a4e5ff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
