@@ -1,6 +1,82 @@
 <template>
   <div>
-    <div v-if="questions.length == 0">Loading...</div>
+    <div class="loading" v-if="questions.length == 0">
+      <p>Loading your questions...</p>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        style="margin: auto; display: block;"
+        width="200px"
+        height="200px"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="xMidYMid"
+      >
+        <rect x="17.5" y="30" width="15" height="40" fill="#dd1785">
+          <animate
+            attributeName="y"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="18;30;30"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+            begin="-0.2s"
+          />
+          <animate
+            attributeName="height"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="64;40;40"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+            begin="-0.2s"
+          />
+        </rect>
+        <rect x="42.5" y="30" width="15" height="40" fill="#ce2683">
+          <animate
+            attributeName="y"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="20.999999999999996;30;30"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+            begin="-0.1s"
+          />
+          <animate
+            attributeName="height"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="58.00000000000001;40;40"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+            begin="-0.1s"
+          />
+        </rect>
+        <rect x="67.5" y="30" width="15" height="40" fill="#b21c77">
+          <animate
+            attributeName="y"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="20.999999999999996;30;30"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+          />
+          <animate
+            attributeName="height"
+            repeatCount="indefinite"
+            dur="1s"
+            calcMode="spline"
+            keyTimes="0;0.5;1"
+            values="58.00000000000001;40;40"
+            keySplines="0 0.5 0.5 1;0 0.5 0.5 1"
+          />
+        </rect>
+      </svg>
+    </div>
     <div
       class="quiz"
       v-else-if="currentQuestionIndex < questions.length"
@@ -18,8 +94,14 @@
       </div>
       <footer>
         <nav class="nav-container" role="navigation" aria-label="Navigation buttons">
-          <button type="button" @click="prevQuestion();" :disabled="currentQuestionIndex < 1">Back</button>
           <button
+            class="button"
+            type="button"
+            @click="prevQuestion();"
+            :disabled="currentQuestionIndex < 1"
+          >Back</button>
+          <button
+            class="button button--next"
             type="button"
             @click="nextQuestion();"
             :disabled="chosenAnswers[currentQuestionIndex] == null || currentQuestionIndex >= questions.length"
@@ -32,6 +114,7 @@
               @click="selectQuestion(index)"
             >
               <button
+                class="button"
                 type="button"
                 :disabled="chosenAnswers.length < index"
                 :class="{'is-active': currentQuestionIndex == index}"
@@ -66,8 +149,8 @@
         </div>
       </div>
       <div class="restart-buttons">
-        <button type="button" @click="restartQuiz()">Try again</button>
-        <button type="button" @click="restartQuiz(true)">Restart with new questions</button>
+        <button class="button" type="button" @click="restartQuiz()">Try again</button>
+        <button class="button" type="button" @click="restartQuiz(true)">Restart with new questions</button>
       </div>
     </div>
   </div>
@@ -244,7 +327,7 @@ a {
   max-width: 50rem;
   width: 100%;
   margin: 0 auto;
-  padding: 4rem 1rem;
+  padding: 3rem 1rem;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -259,7 +342,7 @@ a {
   max-width: 40rem;
   width: 100%;
 }
-button {
+.button {
   border: 0;
   border-radius: 50px;
   padding: 1rem 2rem;
@@ -275,9 +358,20 @@ button {
   &:hover {
     background-color: #3b3e39;
   }
+  &--next {
+    background-color: #dd1785;
+    &:hover {
+      background-color: #c8438d;
+    }
+  }
   &[disabled] {
-    opacity: 0.5;
+    background-color: #a9aaac;
     pointer-events: none;
+  }
+}
+.loading {
+  p {
+    font-size: 2rem;
   }
 }
 .answers-container {
@@ -288,19 +382,20 @@ button {
   margin-right: auto;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #fff;
-  background-color: #505b6c;
-  border-radius: 50px;
   &--option {
     max-width: 100%;
-    padding: 1.5rem;
+    padding: 1rem;
+    border: 2px solid #6f7379;
+    border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.1s;
+    transition: all 0.1s;
     &:hover {
-      background-color: #d04291;
+      color: #c8438d;
+      border-color: #c8438d;
     }
     &.is-selected {
-      background-color: #dd1785;
+      color: #dd1785;
+      border-color: #dd1785;
     }
     & + * {
       margin-top: 0.5rem;
@@ -312,6 +407,8 @@ button {
     margin-top: 0.5rem;
     margin-bottom: 0.25rem;
     padding: 0.75rem 1.5rem;
+    color: #fff;
+    border-radius: 50px;
   }
   &--correct {
     background-color: #16a850;
@@ -333,7 +430,7 @@ button {
   border-radius: 50%;
 }
 .quiz-answers {
-  margin-top: 2rem;;
+  margin-top: 2rem;
   border-top: 1px solid;
 }
 .quiz-answer {
@@ -351,7 +448,7 @@ button {
     .nav-step {
       margin: 10px;
     }
-    button {
+    .button {
       width: 3rem;
       height: 3rem;
       padding: 0.5rem 1rem;
@@ -367,7 +464,7 @@ button {
   align-items: center;
   margin-top: 2rem;
 
-  button {
+  .button {
     min-width: 290px;
     & + * {
       margin-top: 0.5rem;
