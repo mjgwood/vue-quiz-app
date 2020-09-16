@@ -1,55 +1,89 @@
 <template>
   <div>
-    <Loading v-if="questions.length == 0" />
-    <div
-      class="quiz"
-      v-else-if="currentQuestionIndex < questions.length"
-      v-bind:key="currentQuestionIndex"
-    >
-      <h2>{{ questions[currentQuestionIndex].text | decodeHtml }}</h2>
-      <div class="answers-container">
-        <div
-          class="answer answer--option"
-          v-for="(answer, index) in questions[currentQuestionIndex].answers"
-          @click="selectAnswer(index)"
-          :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
-          :key="index"
-        >{{ answer.text | decodeHtml }}</div>
-      </div>
-      <FooterNav
-        v-bind:questions="questions"
-        v-bind:chosenAnswers="chosenAnswers"
-        v-bind:currentQuestionIndex="currentQuestionIndex"
-        v-on:update-question-index="currentQuestionIndex = $event"
-      />
-    </div>
-    <div
-      v-else-if="currentQuestionIndex >= questions.length"
-      v-bind:key="currentQuestionIndex"
-      class="quiz-completed"
-    >
-      <p class="score">{{ calcScore() }} / {{ questions.length }}</p>
-      <h2>{{ completionMessage() }}</h2>
-      <div class="quiz-answers">
-        <div
-          class="quiz-answer"
-          v-for="(question, index) in questions"
-          :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
-          :key="index"
-        >
-          <h3 class="question">{{ question.text | decodeHtml }}</h3>
-          <p
-            class="answer answer--correct"
-          >Correct answer: {{ question.answers.find(a => a.correct == true).text | decodeHtml }}</p>
-          <p
-            v-if="!answerCorrect(question, chosenAnswers[index])"
-            class="answer answer--incorrect"
-          >Your answer: {{ question.answers[chosenAnswers[index]].text | decodeHtml }}</p>
+    <div class="setup-container" v-if="!isStarted">
+      <Loading v-if="categories.length == 0" />
+      <div v-else>
+        <h2>Choose your setup</h2>
+        <h3>Category</h3>
+        <div class="categories-container">
+          <div
+            class="setup-option"
+            :class="{ 'is-selected': chosenCategory == null}"
+            @click="setCategory(null)"
+          >Any Category</div>
+          <div
+            class="setup-option"
+            :class="{ 'is-selected': chosenCategory == category.id}"
+            v-for="category in categories"
+            :key="category.id"
+            @click="setCategory(category.id)"
+          >{{ category.name }}</div>
         </div>
+        <h3>Difficulty</h3>
+        <div class="difficulties-container">
+          <div
+            class="setup-option"
+            :class="{ 'is-selected': chosenDifficulty == difficulty.level}"
+            v-for="(difficulty, index) in difficulties"
+            :key="index"
+            @click="setDifficulty(difficulty.level)"
+          >{{ difficulty.name }}</div>
+        </div>
+        <button class="button button--start" type="button" @click="startQuiz()">Start</button>
       </div>
-      <div class="restart-buttons">
-        <button class="button" type="button" @click="restartQuiz()">Try again</button>
-        <button class="button" type="button" @click="restartQuiz(true)">Restart with new questions</button>
+    </div>
+    <div v-if="isStarted">
+      <Loading v-if="questions.length == 0" />
+      <div
+        class="quiz"
+        v-else-if="currentQuestionIndex < questions.length"
+        :key="currentQuestionIndex"
+      >
+        <h2>{{ questions[currentQuestionIndex].text | decodeHtml }}</h2>
+        <div class="answers-container">
+          <div
+            class="answer answer--option"
+            v-for="(answer, index) in questions[currentQuestionIndex].answers"
+            @click="selectAnswer(index)"
+            :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
+            :key="index"
+          >{{ answer.text | decodeHtml }}</div>
+        </div>
+        <FooterNav
+          :questions="questions"
+          :chosenAnswers="chosenAnswers"
+          :currentQuestionIndex="currentQuestionIndex"
+          v-on:update-question-index="currentQuestionIndex = $event"
+        />
+      </div>
+      <div
+        v-else-if="currentQuestionIndex >= questions.length"
+        :key="currentQuestionIndex"
+        class="quiz-completed"
+      >
+        <p class="score">{{ calcScore() }} / {{ questions.length }}</p>
+        <h2>{{ completionMessage() }}</h2>
+        <div class="quiz-answers">
+          <div
+            class="quiz-answer"
+            v-for="(question, index) in questions"
+            :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
+            :key="index"
+          >
+            <h3 class="question">{{ question.text | decodeHtml }}</h3>
+            <p
+              class="answer answer--correct"
+            >Correct answer: {{ question.answers.find(a => a.correct == true).text | decodeHtml }}</p>
+            <p
+              v-if="!answerCorrect(question, chosenAnswers[index])"
+              class="answer answer--incorrect"
+            >Your answer: {{ question.answers[chosenAnswers[index]].text | decodeHtml }}</p>
+          </div>
+        </div>
+        <div class="restart-buttons">
+          <button class="button" type="button" @click="restartQuiz()">Try again</button>
+          <button class="button" type="button" @click="restartQuiz(true)">Restart with new questions</button>
+        </div>
       </div>
     </div>
   </div>
@@ -61,8 +95,12 @@ import axios from 'axios';
 import Loading from './Loading.vue';
 import FooterNav from './FooterNav.vue';
 
-const questions = [],
-  chosenAnswers = [];
+const difficulties = [
+  { level: null, name: 'Any Difficulty' },
+  { level: 'easy', name: 'Easy' },
+  { level: 'medium', name: 'Medium' },
+  { level: 'hard', name: 'Hard' },
+];
 
 export default {
   name: 'Quiz',
@@ -72,8 +110,13 @@ export default {
   },
   data() {
     return {
-      questions: questions,
-      chosenAnswers: chosenAnswers,
+      isStarted: false,
+      categories: [],
+      difficulties: difficulties,
+      chosenCategory: null,
+      chosenDifficulty: null,
+      questions: [],
+      chosenAnswers: [],
       currentQuestionIndex: 0,
     };
   },
@@ -81,9 +124,44 @@ export default {
     this.init();
   },
   methods: {
-    // Fetch question data from Open Trivia DB and call populateQuestions()
+    // Fetch the Open Trivia DB categories
     init() {
-      const url = 'https://opentdb.com/api.php?amount=5&category=9';
+      const url = 'https://opentdb.com/api_category.php';
+
+      axios
+        .get(url)
+        .then((response) => {
+          // If results not returned successfully
+          if (
+            response.data.trivia_categories == null ||
+            !response.data.trivia_categories.length
+          ) {
+            return Promise.reject(response);
+          }
+
+          this.categories = response.data.trivia_categories;
+        })
+        .catch((error) => {
+          console.log(error);
+          alert(
+            'Sorry, something went wrong trying to load the categories. Please try again.'
+          );
+        });
+    },
+    // Update the chosen category
+    setCategory(category) {
+      this.chosenCategory = category;
+    },
+    // Update the chosen difficulty level
+    setDifficulty(level) {
+      this.chosenDifficulty = level;
+    },
+    // Fetch question data from Open Trivia DB and call populateQuestions()
+    startQuiz() {
+      const url = this.generateUrl();
+
+      this.isStarted = true;
+
       axios
         .get(url)
         .then((response) => {
@@ -100,6 +178,17 @@ export default {
             'Sorry, something went wrong trying to load the questions. Please try again.'
           );
         });
+    },
+    // Create the Open Trivia DB URL with the chosen parameters
+    generateUrl() {
+      let difficultyParam =
+        this.chosenDifficulty == null
+          ? ''
+          : `&difficulty=${this.chosenDifficulty}`;
+      let categoryParam =
+        this.chosenCategory == null ? '' : `&category=${this.chosenCategory}`;
+
+      return `https://opentdb.com/api.php?amount=5${categoryParam}${difficultyParam}`;
     },
     // Populate questions array
     populateQuestions(responseJson) {
@@ -152,9 +241,9 @@ export default {
     completionMessage() {
       let text = 'Better luck next time';
 
-      if (this.calcScore() >= questions.length * 0.8) {
+      if (this.calcScore() >= this.questions.length * 0.8) {
         text = 'Great work!';
-      } else if (this.calcScore() >= questions.length / 2) {
+      } else if (this.calcScore() >= this.questions.length / 2) {
         text = 'Good work!';
       }
 
@@ -169,7 +258,7 @@ export default {
     restartQuiz(newQuestions = false) {
       if (newQuestions) {
         this.questions = [];
-        this.init();
+        this.startQuiz();
       }
 
       this.currentQuestionIndex = 0;
@@ -216,6 +305,43 @@ h3 {
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(45, 45, 45, 0.19),
     0 6px 6px rgba(74, 74, 74, 0.23);
+}
+.setup-container {
+  h2 {
+    padding-bottom: 3rem;
+    border-bottom: 1px solid;
+  }
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+}
+.categories-container,
+.difficulties-container {
+  display: flex;
+  justify-content: space-evenly;
+  flex-flow: row wrap;
+}
+.setup-option {
+  flex: 1 1 auto;
+  margin: 0.5rem;
+  padding: 1rem;
+  font-size: 1.125rem;
+  border: 2px solid #6f7379;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.1s;
+  &:hover {
+    color: #c8438d;
+    border-color: #c8438d;
+  }
+  &.is-selected {
+    color: #dd1785;
+    border-color: #dd1785;
+  }
+}
+.button--start {
+  margin-top: 2rem;
 }
 .quiz {
   max-width: 40rem;

@@ -19,6 +19,9 @@ export default {
 @import 'normalize-scss';
 @include normalize();
 
+h2 {
+  font-size: 1.75rem;
+}
 ul {
   list-style-type: none;
   padding: 0;
@@ -31,14 +34,15 @@ a {
   color: #42b983;
 }
 .button {
-  border: 0;
-  border-radius: 50px;
+  min-width: 160px;
   padding: 1rem 2rem;
   font-family: -system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.2;
   color: #fff;
   background-color: #70757d;
+  border: 0;
+  border-radius: 50px;
   white-space: nowrap;
   text-decoration: none;
   transition: background-color 0.1s;

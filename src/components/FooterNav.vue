@@ -85,6 +85,7 @@ export default {
     .button {
       width: 3rem;
       height: 3rem;
+      min-width: auto;
       padding: 0.5rem 1rem;
     }
     .is-active {
