@@ -4,6 +4,16 @@
       <Loading v-if="categories.length == 0" text="Loading..." />
       <div v-else>
         <h1>Quizzem!</h1>
+        <h2>Difficulty</h2>
+        <div class="difficulties-container">
+          <div
+            class="setup-option"
+            :class="{ 'is-selected': chosenDifficulty == difficulty.level }"
+            v-for="(difficulty, index) in difficulties"
+            :key="index"
+            @click="setDifficulty(difficulty.level)"
+          >{{ difficulty.name }}</div>
+        </div>
         <h2>Category</h2>
         <div class="categories-container">
           <div
@@ -18,16 +28,6 @@
             :key="category.id"
             @click="setCategory(category.id)"
           >{{ category.name }}</div>
-        </div>
-        <h2>Difficulty</h2>
-        <div class="difficulties-container">
-          <div
-            class="setup-option"
-            :class="{ 'is-selected': chosenDifficulty == difficulty.level }"
-            v-for="(difficulty, index) in difficulties"
-            :key="index"
-            @click="setDifficulty(difficulty.level)"
-          >{{ difficulty.name }}</div>
         </div>
         <button class="button button--start" type="button" @click="startQuiz()">Start</button>
       </div>
