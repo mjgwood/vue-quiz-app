@@ -60,6 +60,7 @@ a {
     background-color: $btn-hover;
   }
   &[disabled] {
+    color: #313030;
     background-color: #a9aaac;
     pointer-events: none;
   }
