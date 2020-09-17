@@ -19,6 +19,13 @@ export default {
 @import 'normalize-scss';
 @include normalize();
 
+html {
+  line-height: 1.5;
+}
+h1 {
+  font-size: 3em;
+  font-style: italic;
+}
 h2 {
   font-size: 1.75rem;
 }
@@ -35,20 +42,21 @@ a {
 }
 .button {
   min-width: 140px;
-  padding: 1rem 2rem;
+  padding: 1.25rem 2rem;
   font-family: -system-ui, sans-serif;
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.2;
-  color: #fff;
-  background-color: #70757d;
+  color: #313030;
+  background-color: $btn-bg;
   border: 0;
-  border-radius: 50px;
+  border-radius: 10px;
   white-space: nowrap;
   text-decoration: none;
-  transition: background-color 0.1s;
+  transition: all 0.1s;
   cursor: pointer;
   &:hover {
-    background-color: #3b3e39;
+    color: #fff;
+    background-color: $btn-hover;
   }
   &[disabled] {
     background-color: #a9aaac;
@@ -62,7 +70,9 @@ a {
   padding: 40px 10px;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  background-color: #a4e5ff;
+  color: #fff;
+  background-color: #0e1324;
+  letter-spacing: 0.5px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

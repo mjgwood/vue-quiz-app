@@ -66,9 +66,10 @@ export default {
 <style lang="scss" scoped>
 .button {
   &--next {
-    background-color: #dd1785;
+    color: #fff;
+    background-color: $btn-bg--active;
     &:hover {
-      background-color: #c8438d;
+      background-color: $btn-hover;
     }
   }
 }
@@ -76,9 +77,10 @@ export default {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-top: 2rem;
+  margin-top: 3rem;
   .nav-steps {
     flex: 1 0 100%;
+    margin-top: 2rem;
     .nav-step {
       margin: 10px 6px;
     }
@@ -86,10 +88,11 @@ export default {
       width: 3rem;
       height: 3rem;
       min-width: auto;
-      padding: 0.5rem 1rem;
+      padding: 0;
     }
     .is-active {
-      background-color: #3b3e39;
+      color: #fff;
+      background-color: $btn-bg--active;
     }
   }
 }

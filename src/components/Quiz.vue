@@ -1,19 +1,20 @@
 <template>
   <div>
     <div class="setup-container" v-if="!isStarted">
-      <Loading v-if="categories.length == 0" text="Loading setup options..." />
+      <Loading v-if="categories.length == 0" text="Loading..." />
       <div v-else>
-        <h2>Choose your setup</h2>
+        <h1>Quizzem!</h1>
+        <h2>Choose your setup options</h2>
         <h3>Category</h3>
         <div class="categories-container">
           <div
             class="setup-option"
-            :class="{ 'is-selected': chosenCategory == null}"
+            :class="{ 'is-selected': chosenCategory == null }"
             @click="setCategory(null)"
           >Any Category</div>
           <div
             class="setup-option"
-            :class="{ 'is-selected': chosenCategory == category.id}"
+            :class="{ 'is-selected': chosenCategory == category.id }"
             v-for="category in categories"
             :key="category.id"
             @click="setCategory(category.id)"
@@ -23,7 +24,7 @@
         <div class="difficulties-container">
           <div
             class="setup-option"
-            :class="{ 'is-selected': chosenDifficulty == difficulty.level}"
+            :class="{ 'is-selected': chosenDifficulty == difficulty.level }"
             v-for="(difficulty, index) in difficulties"
             :key="index"
             @click="setDifficulty(difficulty.level)"
@@ -33,7 +34,7 @@
       </div>
     </div>
     <div v-if="isStarted">
-      <Loading v-if="questions.length == 0" text="Loading your questions..." />
+      <Loading v-if="questions.length == 0" text="Thinking of questions..." />
       <div
         class="quiz"
         v-else-if="currentQuestionIndex < questions.length"
@@ -45,7 +46,7 @@
             class="answer answer--option"
             v-for="(answer, index) in questions[currentQuestionIndex].answers"
             @click="selectAnswer(index)"
-            :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index}"
+            :class="{ 'is-selected': chosenAnswers[currentQuestionIndex] == index }"
             :key="index"
           >{{ answer.text | decodeHtml }}</div>
         </div>
@@ -62,7 +63,7 @@
         class="quiz-completed"
       >
         <p class="score">{{ calcScore() }} / {{ questions.length }}</p>
-        <h2>{{ completionMessage() }}</h2>
+        <h2 class="completion-message">{{ completionMessage() }}</h2>
         <div class="quiz-answers">
           <div
             class="quiz-answer"
@@ -310,20 +311,23 @@ h3 {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #555;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(45, 45, 45, 0.19),
-    0 6px 6px rgba(74, 74, 74, 0.23);
 }
 .setup-container {
   h2 {
-    padding-bottom: 3rem;
-    border-bottom: 1px solid;
+    margin-top: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid;
   }
   h3 {
     font-size: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    &::after {
+      content: '';
+      display: block;
+      border-bottom: 5px solid #fff;
+      width: 100px;
+      margin: 1rem auto 0;
+    }
   }
 }
 .categories-container,
@@ -334,71 +338,79 @@ h3 {
 }
 .setup-option {
   flex: 1 1 auto;
+  min-width: 100px;
   margin: 0.5rem;
-  padding: 1rem;
+  padding: 0.875rem;
   font-size: 1.125rem;
-  border: 1px solid #6f7379;
-  border-radius: 50px;
+  color: #313030;
+  background-color: $option-bg;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.1s;
   &:hover {
-    color: #c8438d;
-    border-color: #c8438d;
+    color: #fff;
+    background-color: $option-hover;
   }
   &.is-selected {
-    color: #dd1785;
-    border-color: #dd1785;
+    background-color: $option-bg--active;
+    color: #fff;
   }
 }
 .button--start {
-  margin-top: 2rem;
-  background-color: #dd1785;
+  margin-top: 3rem;
+  color: #fff;
+  background-color: $btn-bg--active;
   &:hover {
-    background-color: #c8438d;
+    background-color: $btn-hover;
   }
 }
 .quiz {
+  display: flex;
+  flex-flow: row wrap;
   max-width: 40rem;
   width: 100%;
+  & > * {
+    flex: 1 1 100%;
+  }
 }
 .answers-container {
-  margin-top: 2.5rem;
+  margin-top: 3rem;
 }
 .answer {
   margin-left: auto;
   margin-right: auto;
   font-size: 1.125rem;
   font-weight: 600;
+  color: #313030;
+  background-color: #fff;
+  border-radius: 5px;
   &--option {
     max-width: 100%;
     padding: 1rem;
-    border: 1px solid #6f7379;
-    border-radius: 50px;
     cursor: pointer;
     transition: all 0.1s;
     &:hover {
-      color: #c8438d;
-      border-color: #c8438d;
+      color: #fff;
+      background-color: $option-hover;
     }
     &.is-selected {
-      color: #dd1785;
-      border-color: #dd1785;
+      color: #fff;
+      background-color: $option-bg--active;
     }
     & + * {
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
   }
   &--correct,
   &--incorrect {
-    max-width: 80%;
-    margin-top: 0.5rem;
+    max-width: 70%;
+    margin-top: 0.75rem;
     margin-bottom: 0.25rem;
-    padding: 0.75rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     color: #fff;
-    border-radius: 50px;
   }
   &--correct {
-    background-color: #16a850;
+    background-color: #11b352;
   }
   &--incorrect {
     background-color: #d41f22;
@@ -416,25 +428,37 @@ h3 {
   border: 0.375rem solid;
   border-radius: 50%;
 }
+.completion-message {
+  font-size: 2.5rem;
+}
 .quiz-answers {
-  margin-top: 2rem;
-  border-top: 1px solid;
+  margin-top: 3rem;
+  border-top: 2px solid;
 }
 .quiz-answer {
+  margin: 4rem 2rem 6rem;
   .question {
-    margin-bottom: 1rem;
+    margin-bottom: 2.5rem;
+    font-size: 1.5rem;
+    &::after {
+      content: '';
+      display: block;
+      border-bottom: 5px solid #fff;
+      width: 100px;
+      margin: 2rem auto 0;
+    }
   }
 }
 .restart-buttons {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   margin-top: 2rem;
 
   .button {
     min-width: 290px;
-    margin-top: 1rem;
+    margin: 1rem 0.5rem 0;
   }
 }
 </style>
