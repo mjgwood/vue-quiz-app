@@ -1,4 +1,8 @@
-# vue-quiz-app
+# Quizzem!
+
+A quiz app built with Vue
+
+View the [live app](https://mjgwood.github.io/vue-quiz-app/)
 
 ## Project setup
 ```
@@ -20,5 +24,5 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Credits
+This app uses the [Open Trivia DB](https://opentdb.com/) API from [PixelTail Games](https://www.pixeltailgames.com/), licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
