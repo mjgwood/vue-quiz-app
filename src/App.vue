@@ -52,6 +52,7 @@ a {
   border-radius: 10px;
   white-space: nowrap;
   text-decoration: none;
+  text-transform: capitalize;
   transition: all 0.1s;
   cursor: pointer;
   &:hover {
@@ -67,7 +68,7 @@ a {
   display: flex;
   align-items: center;
   min-height: calc(100vh - 80px);
-  padding: 40px 10px;
+  padding: 2.5rem 0.625rem;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   color: #fff;

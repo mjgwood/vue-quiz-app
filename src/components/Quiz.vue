@@ -4,8 +4,7 @@
       <Loading v-if="categories.length == 0" text="Loading..." />
       <div v-else>
         <h1>Quizzem!</h1>
-        <h2>Choose your setup options</h2>
-        <h3>Category</h3>
+        <h2>Category</h2>
         <div class="categories-container">
           <div
             class="setup-option"
@@ -20,7 +19,7 @@
             @click="setCategory(category.id)"
           >{{ category.name }}</div>
         </div>
-        <h3>Difficulty</h3>
+        <h2>Difficulty</h2>
         <div class="difficulties-container">
           <div
             class="setup-option"
@@ -142,6 +141,11 @@ export default {
           }
 
           this.categories = response.data.trivia_categories;
+
+          // Remove extra categorisation from long category names
+          this.categories.forEach((category) => {
+            category.name = category.name.replace(/\w+: /gi, '');
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -306,21 +310,24 @@ h3 {
   max-width: 50rem;
   width: 100%;
   margin: 0 auto;
-  padding: 3rem 1rem;
   text-align: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @media screen and (min-width: 768px) {
+    padding: 3rem 1rem;
+  }
+  @media screen and (min-width: 1200px) {
+    max-width: 70rem;
+  }
 }
 .setup-container {
-  h2 {
-    margin-top: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid;
+  h1 {
+    margin-top: 0;
   }
-  h3 {
+  h2 {
     font-size: 1.5rem;
-    margin-bottom: 2rem;
+    margin: 3rem auto 2rem;
     &::after {
       content: '';
       display: block;
@@ -374,7 +381,10 @@ h3 {
   }
 }
 .answers-container {
-  margin-top: 3rem;
+  margin-top: 1rem;
+  @media screen and (min-width: 768px) {
+    margin-top: 3rem;
+  }
 }
 .answer {
   margin-left: auto;
@@ -403,11 +413,13 @@ h3 {
   }
   &--correct,
   &--incorrect {
-    max-width: 70%;
     margin-top: 0.75rem;
     margin-bottom: 0.25rem;
     padding: 1.25rem 1.5rem;
     color: #fff;
+    @media screen and (min-width: 768px) {
+      max-width: 50%;
+    }
   }
   &--correct {
     background-color: #11b352;
