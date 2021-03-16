@@ -2,7 +2,7 @@
 
 A quiz app built with Vue
 
-View the [live app](https://mjgwood.github.io/vue-quiz-app/)
+~View the [live app](https://mjgwood.github.io/vue-quiz-app/)~ (Open Trivia DB no longer appears to be working)
 
 ## Project setup
 ```
