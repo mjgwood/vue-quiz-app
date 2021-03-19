@@ -351,7 +351,7 @@ h3 {
   font-size: 1.125rem;
   color: #313030;
   background-color: $option-bg;
-  border-radius: 5px;
+  border-radius: 1px;
   cursor: pointer;
   transition: all 0.1s;
   &:hover {
@@ -393,7 +393,7 @@ h3 {
   font-weight: 600;
   color: #313030;
   background-color: #fff;
-  border-radius: 5px;
+  border-radius: 1px;
   &--option {
     max-width: 100%;
     padding: 1rem;

@@ -49,7 +49,7 @@ a {
   color: #313030;
   background-color: $btn-bg;
   border: 0;
-  border-radius: 10px;
+  border-radius: 1px;
   white-space: nowrap;
   text-decoration: none;
   text-transform: capitalize;
