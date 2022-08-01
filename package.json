@@ -11,7 +11,7 @@
     "axios": "^0.27.2",
     "core-js": "^3.24.0",
     "normalize-scss": "^7.0.1",
-    "vue": "^2.6.14"
+    "vue": "^2.7.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-eslint": "~4.5.17",
@@ -22,7 +22,7 @@
     "eslint-plugin-vue": "^8.7.1",
     "sass": "^1.54.0",
     "sass-loader": "^12.6.0",
-    "vue-template-compiler": "^2.6.14"
+    "vue-template-compiler": "^2.7.8"
   },
   "eslintConfig": {
     "root": true,
